@@ -269,7 +269,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Nama Sekolah / Institusi</label>
-              <input type="text" id="input-sekolah" oninput="updateOPR()" value="SEKOLAH KEBANGSAAN SERI PERDANA" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-sekolah" oninput="updateOPR()" value="SEKOLAH JENIS KEBANGSAAN PEI HUA" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
 
             <div>
