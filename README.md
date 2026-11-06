@@ -269,23 +269,13 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-700 mb-1">Nama Sekolah / Institusi</label>
-              <input type="text" id="input-sekolah" oninput="updateOPR()" value="SEKOLAH JENIS KEBANGSAAN PEI HUA" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-sekolah" oninput="updateOPR()" value="SEKOLAH JENIS KEBANGSAAN (CINA) PEI HUA" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-slate-700 mb-1">Pilihan Logo Header</label>
-              <select id="input-logo-type" onchange="toggleLogoInput(); updateOPR();" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition bg-white">
-                <option value="kpm">Logo KPM (Standard Rasmi)</option>
-                <option value="jpn">Logo JPN / PPD</option>
-                <option value="custom">URL Logo Tersuai</option>
-                <option value="none">Tanpa Logo</option>
-              </select>
+              <label class="block text-xs font-medium text-slate-700 mb-1">Pautan Logo Sekolah (URL)</label>
+              <input type="text" id="input-logo-url" oninput="updateOPR()" value="https://app.pandai.org/uploads/school/NBC4046.jpg" placeholder="https://example.com/logo-sekolah.png" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
-          </div>
-
-          <div id="custom-logo-container" class="hidden">
-            <label class="block text-xs font-medium text-slate-700 mb-1">URL Logo Tersuai (Pautan Gambar)</label>
-            <input type="text" id="input-logo-url" oninput="updateOPR()" placeholder="https://example.com/logo.png" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
           </div>
         </div>
 
@@ -489,22 +479,22 @@
             <!-- Disediakan Oleh -->
             <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-xs font-bold text-slate-800 block">Disediakan Oleh:</span>
-              <input type="text" id="input-disediakan-nama" oninput="updateOPR()" value="NURUL HASNAH BINTI ROSLI" placeholder="Nama Pegawai" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disediakan-nama" oninput="updateOPR()" value="LAI YIN LEE" placeholder="Nama Pegawai" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
               <input type="text" id="input-disediakan-jawatan" oninput="updateOPR()" value="Penyelaras Program STEM" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
 
             <!-- Disemak Oleh -->
             <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-xs font-bold text-slate-800 block">Disemak Oleh:</span>
-              <input type="text" id="input-disemak-nama" oninput="updateOPR()" value="ZULKIFLI BIN MAHMUD" placeholder="Nama Penolong Kanan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disemak-nama" oninput="updateOPR()" value="IRENE WAY" placeholder="Nama Penolong Kanan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
               <input type="text" id="input-disemak-jawatan" oninput="updateOPR()" value="Penolong Kanan Pentadbiran" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
 
             <!-- Disahkan Oleh -->
             <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-xs font-bold text-slate-800 block">Disahkan Oleh:</span>
-              <input type="text" id="input-disahkan-nama" oninput="updateOPR()" value="DR. AZMAN BIN SHAH" placeholder="Nama Guru Besar / Pengetua" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
-              <input type="text" id="input-disahkan-jawatan" oninput="updateOPR()" value="Guru Besar Cemerlang" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disahkan-nama" oninput="updateOPR()" value="LEOW SOOK TIN" placeholder="Nama Guru Besar / Pengetua" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disahkan-jawatan" oninput="updateOPR()" value="Guru Besar" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
           </div>
         </div>
@@ -536,11 +526,11 @@
             <!-- Header KPM Standard -->
             <div class="border-b-2 border-slate-900 pb-1 mb-1 flex items-center justify-between gap-2">
               <div id="view-logo-container" class="w-10 h-10 flex items-center justify-center shrink-0">
-                <img id="view-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Coat_of_arms_of_Malaysia.svg/300px-Coat_of_arms_of_Malaysia.svg.png" alt="Logo Header" class="max-h-full max-w-full object-contain">
+                <img id="view-logo-img" src="https://app.pandai.org/uploads/school/NBC4046.jpg" alt="Logo Header" class="max-h-full max-w-full object-contain">
               </div>
 
               <div class="text-center flex-1">
-                <h2 id="view-sekolah" class="font-extrabold text-xs tracking-wide uppercase text-slate-900">SJKC PEI HUA</h2>
+                <h2 id="view-sekolah" class="font-extrabold text-xs tracking-wide uppercase text-slate-900">SJK (C) PEI HUA</h2>
                 <h3 class="font-bold text-[10px] uppercase tracking-wider text-slate-800">LAPORAN SATU HALAMAN (ONE PAGE REPORT - OPR)</h3>
                 <p class="text-[8.5px] font-semibold text-slate-600 uppercase" id="view-unit-anjuran">UNIT KURIKULUM | PERINGKAT SEKOLAH</p>
               </div>
@@ -595,26 +585,26 @@
             <!-- Analysis Grid: SWOT / Impak -->
             <div class="grid grid-cols-2 gap-2 mb-1.5">
               <!-- Kekuatan & Kelemahan -->
-              <div class="border border-slate-800 p-1.5 space-y-1">
-                <div>
-                  <span class="font-bold text-slate-900 border-b border-slate-400 block pb-0.5 mb-0.5 uppercase text-[8px]">3. Kekuatan (Strengths):</span>
-                  <div id="view-kekuatan" class="whitespace-pre-line text-slate-800 text-[8px]"></div>
+              <div class="space-y-1.5">
+                <div class="border border-slate-800 p-1.5 bg-white">
+                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">3. Kekuatan (Strengths)</div>
+                  <div id="view-kekuatan" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
                 </div>
-                <div>
-                  <span class="font-bold text-slate-900 border-b border-slate-400 block pb-0.5 mb-0.5 uppercase text-[8px]">4. Kelemahan (Weaknesses):</span>
-                  <div id="view-kelemahan" class="whitespace-pre-line text-slate-800 text-[8px]"></div>
+                <div class="border border-slate-800 p-1.5 bg-white">
+                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">4. Kelemahan (Weaknesses)</div>
+                  <div id="view-kelemahan" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
                 </div>
               </div>
 
               <!-- Penambahbaikan & Impak -->
-              <div class="border border-slate-800 p-1.5 space-y-1">
-                <div>
-                  <span class="font-bold text-slate-900 border-b border-slate-400 block pb-0.5 mb-0.5 uppercase text-[8px]">5. Cadangan Penambahbaikan:</span>
-                  <div id="view-penambahbaikan" class="whitespace-pre-line text-slate-800 text-[8px]"></div>
+              <div class="space-y-1.5">
+                <div class="border border-slate-800 p-1.5 bg-white">
+                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">5. Cadangan Penambahbaikan</div>
+                  <div id="view-penambahbaikan" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
                 </div>
-                <div>
-                  <span class="font-bold text-slate-900 border-b border-slate-400 block pb-0.5 mb-0.5 uppercase text-[8px]">6. Impak Program (Outcomes):</span>
-                  <div id="view-impak" class="whitespace-pre-line text-slate-800 text-[8px]"></div>
+                <div class="border border-slate-800 p-1.5 bg-white">
+                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">6. Impak Program (Outcomes)</div>
+                  <div id="view-impak" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
                 </div>
               </div>
             </div>
@@ -712,7 +702,7 @@
 
     // Preset Header Logos
     const logoPresets = {
-      kpm: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Coat_of_arms_of_Malaysia.svg/300px-Coat_of_arms_of_Malaysia.svg.png",
+      kpm: "https://www.moe.gov.my/storage/files/shares/images/logo/logo-korporat-kpm-bm.jpg",
       jpn: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Jabatan_Pendidikan_Negeri_Selangor.png/300px-Jabatan_Pendidikan_Negeri_Selangor.png"
     };
 
@@ -865,21 +855,13 @@
         id('view-sekolah').innerText = id('input-sekolah').value || 'NAMA SEKOLAH / INSTITUSI';
       }
       
-      const logoType = id('input-logo-type') ? id('input-logo-type').value : 'kpm';
       const logoImg = id('view-logo-img');
       const logoContainer = id('view-logo-container');
+      const logoUrlInput = id('input-logo-url');
 
       if (logoContainer && logoImg) {
-        if (logoType === 'none') {
-          logoContainer.classList.add('hidden');
-        } else {
-          logoContainer.classList.remove('hidden');
-          if (logoType === 'custom') {
-            logoImg.src = (id('input-logo-url') && id('input-logo-url').value) || logoPresets.kpm;
-          } else if (logoPresets[logoType]) {
-            logoImg.src = logoPresets[logoType];
-          }
-        }
+        logoContainer.classList.remove('hidden');
+        logoImg.src = (logoUrlInput && logoUrlInput.value.trim()) ? logoUrlInput.value.trim() : "https://app.pandai.org/uploads/school/NBC4046.jpg";
       }
 
       // Metadata & Units
@@ -1094,7 +1076,6 @@
       if (form) form.reset();
       setDefaultDateToday();
       handleTempatChange();
-      toggleLogoInput();
       autoFillInitialAI();
       updateOPR();
       showToast("Borang telah diset semula!");
