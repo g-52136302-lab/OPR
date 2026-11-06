@@ -540,7 +540,7 @@
               </div>
 
               <div class="text-center flex-1">
-                <h2 id="view-sekolah" class="font-extrabold text-xs tracking-wide uppercase text-slate-900">SK SERI PERDANA</h2>
+                <h2 id="view-sekolah" class="font-extrabold text-xs tracking-wide uppercase text-slate-900">SJKC PEI HUA</h2>
                 <h3 class="font-bold text-[10px] uppercase tracking-wider text-slate-800">LAPORAN SATU HALAMAN (ONE PAGE REPORT - OPR)</h3>
                 <p class="text-[8.5px] font-semibold text-slate-600 uppercase" id="view-unit-anjuran">UNIT KURIKULUM | PERINGKAT SEKOLAH</p>
               </div>
