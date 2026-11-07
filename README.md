@@ -214,10 +214,10 @@
           </div>
           <div>
             <h1 class="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2">
-              Penjana OPR KPM 
+              OPR 
               <span class="bg-blue-500/30 text-blue-300 text-[10px] sm:text-xs px-2 py-0.5 rounded-full border border-blue-400/30">Edisi AI</span>
             </h1>
-            <p class="text-[11px] text-slate-400 hidden md:block">Sistem Laporan Satu Halaman Standard Sekolah & Pejabat Pendidikan KPM</p>
+            <p class="text-[11px] text-slate-400 hidden md:block">Sistem Laporan Satu Halaman Standard Sekolah</p>
           </div>
         </div>
       </div>
@@ -525,7 +525,7 @@
           <div>
             <!-- Header KPM Standard -->
             <div class="border-b-2 border-slate-900 pb-1 mb-1 flex items-center justify-between gap-2">
-              <div id="view-logo-container" class="w-10 h-10 flex items-center justify-center shrink-0">
+              <div id="view-logo-container" class="w-[60px] h-[60px] flex items-center justify-center shrink-0">
                 <img id="view-logo-img" src="https://app.pandai.org/uploads/school/NBC4046.jpg" alt="Logo Header" class="max-h-full max-w-full object-contain">
               </div>
 
@@ -535,7 +535,7 @@
                 <p class="text-[8.5px] font-semibold text-slate-600 uppercase" id="view-unit-anjuran">UNIT KURIKULUM | PERINGKAT SEKOLAH</p>
               </div>
 
-              <div class="w-10 h-10 shrink-0 opacity-0">
+              <div class="w-[60px] h-[60px] shrink-0 opacity-0">
                 <!-- Spacer for visual symmetry -->
               </div>
             </div>
