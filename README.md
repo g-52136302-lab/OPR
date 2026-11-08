@@ -49,6 +49,7 @@
       .a4-preview-wrapper {
         transform: scale(0.8);
         transform-origin: top center;
+        margin-bottom: -50px;
       }
     }
 
@@ -144,9 +145,31 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
+
+    /* Utility for pre-wrap text in preview */
+    .whitespace-pre-line {
+      white-space: pre-line;
+    }
   </style>
 </head>
 <body class="text-slate-800 antialiased h-full flex flex-col min-h-screen">
+
+  <!-- Custom Modal (Replaces alert/confirm) -->
+  <div id="custom-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 transform transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div id="modal-icon" class="p-2 bg-blue-100 text-blue-600 rounded-full">
+          <i data-lucide="info" class="w-5 h-5"></i>
+        </div>
+        <h3 id="modal-title" class="text-lg font-bold text-slate-900">Mesej</h3>
+      </div>
+      <p id="modal-message" class="text-sm text-slate-600 mb-6 leading-relaxed">...</p>
+      <div class="flex justify-end gap-3" id="modal-actions">
+        <button id="modal-btn-cancel" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg hidden transition">Batal</button>
+        <button id="modal-btn-ok" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm">OK</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Mobile Navigation Drawer Backdrop -->
   <div id="mobile-drawer-backdrop" onclick="toggleMobileDrawer(false)" class="no-print fixed inset-0 bg-slate-900/60 z-50 hidden transition-opacity duration-300 opacity-0"></div>
@@ -178,7 +201,7 @@
           <i data-lucide="eye" class="w-4 h-4"></i>
           <span>Pratonton Dokumen A4</span>
         </button>
-        <button onclick="autoFillWholeFormAI(); toggleMobileDrawer(false);" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-emerald-400 hover:bg-slate-800 transition">
+        <button type="button" onclick="autoFillWholeFormAI(); toggleMobileDrawer(false);" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-emerald-400 hover:bg-slate-800 transition">
           <i data-lucide="sparkles" class="w-4 h-4"></i>
           <span>Jana Kandungan via AI</span>
         </button>
@@ -190,7 +213,7 @@
     </div>
 
     <div class="border-t border-slate-800 pt-4 space-y-2">
-      <button onclick="resetForm(); toggleMobileDrawer(false);" class="w-full flex items-center justify-center space-x-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-white bg-slate-800 rounded-lg">
+      <button onclick="promptResetForm(); toggleMobileDrawer(false);" class="w-full flex items-center justify-center space-x-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-white bg-slate-800 rounded-lg">
         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
         <span>Set Semula Borang</span>
       </button>
@@ -224,7 +247,7 @@
 
       <!-- Right Action Toolbar -->
       <div class="flex items-center space-x-2">
-        <button onclick="autoFillWholeFormAI()" class="px-3 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow flex items-center gap-1.5 transition active:scale-95">
+        <button type="button" onclick="autoFillWholeFormAI()" id="btn-ai-all" class="px-3 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow flex items-center gap-1.5 transition active:scale-95">
           <i data-lucide="sparkles" class="w-4 h-4"></i>
           <span class="hidden sm:inline">Jana Semua via</span> AI
         </button>
@@ -234,7 +257,7 @@
           <span class="hidden sm:inline">Cetak /</span> PDF
         </button>
 
-        <button onclick="resetForm()" class="hidden sm:flex px-3 py-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="Set Semula Borang">
+        <button onclick="promptResetForm()" class="hidden sm:flex px-3 py-2 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="Set Semula Borang">
           <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
         </button>
       </div>
@@ -296,7 +319,7 @@
               <div>
                 <label class="block text-xs font-medium text-slate-700 mb-1">Unit / Sektor Anjuran</label>
                 <select id="input-unit" onchange="updateOPR()" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition bg-white">
-                  <option value="Kurikulum">Kurikulum</option>
+                  <option value="Kurikulum" selected>Kurikulum</option>
                   <option value="Hal Ehwal Murid (HEM)">Hal Ehwal Murid (HEM)</option>
                   <option value="Kokurikulum">Kokurikulum</option>
                   <option value="Pentadbiran">Pentadbiran</option>
@@ -308,7 +331,7 @@
               <div>
                 <label class="block text-xs font-medium text-slate-700 mb-1">Penganjur Utama</label>
                 <select id="input-anjuran" onchange="updateOPR()" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition bg-white">
-                  <option value="Peringkat Sekolah">Sekolah</option>
+                  <option value="Peringkat Sekolah" selected>Sekolah</option>
                   <option value="Panitia Sains & Matematik">Panitia Mata Pelajaran</option>
                   <option value="Kelab & Persatuan">Kelab & Persatuan</option>
                   <option value="Unit Beruniform">Unit Beruniform</option>
@@ -327,13 +350,13 @@
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-700 mb-1">Masa</label>
-                <input type="text" id="input-masa" oninput="updateOPR()" value="8.30 PAGI - 1.00 TENGARI" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                <input type="text" id="input-masa" oninput="updateOPR()" value="8.30 PAGI - 1.00 TENGAH HARI" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
               </div>
               <!-- Location Dropdown with Custom Input Toggle -->
               <div>
                 <label class="block text-xs font-medium text-slate-700 mb-1">Tempat Program</label>
                 <select id="input-tempat-select" onchange="handleTempatChange(); updateOPR();" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition bg-white">
-                  <option value="STEM Lab">STEM Lab</option>
+                  <option value="STEM Lab" selected>STEM Lab</option>
                   <option value="Kelas Pemulihan">Kelas Pemulihan</option>
                   <option value="Dewan Sekolah">Dewan Sekolah</option>
                   <option value="Padang Sekolah">Padang</option>
@@ -373,68 +396,68 @@
           </div>
 
           <!-- 1. Objektif -->
-          <div class="space-y-1">
+          <div class="space-y-1 relative">
             <div class="flex justify-between items-center">
               <label class="text-xs font-semibold text-slate-700">1. Objektif Program</label>
-              <button type="button" onclick="generateAISpecific('objektif')" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md transition active:scale-95">
+              <button type="button" onclick="generateAISpecific('objektif')" class="ai-btn text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md transition active:scale-95">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-500"></i> ✦ Cadangan AI
               </button>
             </div>
-            <textarea id="input-objektif" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition"></textarea>
+            <textarea id="input-objektif" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition">Meningkatkan minat murid dalam bidang Sains, Teknologi, Kejuruteraan dan Matematik.&#10;Mendedahkan murid dengan aplikasi inovasi dan teknologi terkini.&#10;Memupuk semangat kerja berpasukan dan daya saing yang sihat di kalangan peserta.</textarea>
           </div>
 
           <!-- 2. Ringkasan Aktiviti -->
-          <div class="space-y-1">
+          <div class="space-y-1 relative">
             <div class="flex justify-between items-center">
               <label class="text-xs font-semibold text-slate-700">2. Ringkasan Pelaksanaan / Pengisian</label>
-              <button type="button" onclick="generateAISpecific('ringkasan')" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md transition active:scale-95">
+              <button type="button" onclick="generateAISpecific('ringkasan')" class="ai-btn text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md transition active:scale-95">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-500"></i> ✦ Cadangan AI
               </button>
             </div>
-            <textarea id="input-ringkasan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition"></textarea>
+            <textarea id="input-ringkasan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition">Program bermula dengan taklimat ringkas mengenai kepentingan STEM di masa hadapan. Selepas itu, murid dibahagikan kepada beberapa kumpulan untuk melaksanakan aktiviti hands-on seperti pembinaan roket air dan robotik asas. Bengkel diakhiri dengan sesi pembentangan hasil ciptaan oleh setiap kumpulan dan penyampaian hadiah.</textarea>
           </div>
 
           <!-- 3 & 4. Kekuatan & Kelemahan -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="space-y-1">
+            <div class="space-y-1 relative">
               <div class="flex justify-between items-center">
                 <label class="text-xs font-semibold text-slate-700">3. Kekuatan (Strengths)</label>
-                <button type="button" onclick="generateAISpecific('kekuatan')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
+                <button type="button" onclick="generateAISpecific('kekuatan')" class="ai-btn text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
                   <i data-lucide="sparkles" class="w-3 h-3"></i> AI
                 </button>
               </div>
-              <textarea id="input-kekuatan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition"></textarea>
+              <textarea id="input-kekuatan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition">1. Penglibatan aktif dari semua murid.&#10;2. Fasilitator yang berpengetahuan luas.&#10;3. Modul aktiviti yang menarik dan interaktif.</textarea>
             </div>
-            <div class="space-y-1">
+            <div class="space-y-1 relative">
               <div class="flex justify-between items-center">
                 <label class="text-xs font-semibold text-slate-700">4. Kelemahan (Weaknesses)</label>
-                <button type="button" onclick="generateAISpecific('kelemahan')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
+                <button type="button" onclick="generateAISpecific('kelemahan')" class="ai-btn text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
                   <i data-lucide="sparkles" class="w-3 h-3"></i> AI
                 </button>
               </div>
-              <textarea id="input-kelemahan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition"></textarea>
+              <textarea id="input-kelemahan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition">1. Kekangan masa untuk setiap stesen aktiviti.&#10;2. Kekurangan beberapa peralatan teknikal.&#10;3. Ruang makmal agak sempit untuk jumlah peserta yang ramai.</textarea>
             </div>
           </div>
 
           <!-- 5 & 6. Penambahbaikan & Impak -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="space-y-1">
+            <div class="space-y-1 relative">
               <div class="flex justify-between items-center">
                 <label class="text-xs font-semibold text-slate-700">5. Cadangan Penambahbaikan</label>
-                <button type="button" onclick="generateAISpecific('penambahbaikan')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
+                <button type="button" onclick="generateAISpecific('penambahbaikan')" class="ai-btn text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
                   <i data-lucide="sparkles" class="w-3 h-3"></i> AI
                 </button>
               </div>
-              <textarea id="input-penambahbaikan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition"></textarea>
+              <textarea id="input-penambahbaikan" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition">1. Menambah masa bagi sesi praktikal.&#10;2. Mengadakan program ini di dewan utama untuk ruang yang lebih selesa.&#10;3. Menyediakan kelengkapan tambahan secara berkumpulan.</textarea>
             </div>
-            <div class="space-y-1">
+            <div class="space-y-1 relative">
               <div class="flex justify-between items-center">
                 <label class="text-xs font-semibold text-slate-700">6. Impak Program (Outcomes)</label>
-                <button type="button" onclick="generateAISpecific('impak')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
+                <button type="button" onclick="generateAISpecific('impak')" class="ai-btn text-[10px] text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5 bg-blue-50 px-2 py-1 rounded-md transition">
                   <i data-lucide="sparkles" class="w-3 h-3"></i> AI
                 </button>
               </div>
-              <textarea id="input-impak" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition"></textarea>
+              <textarea id="input-impak" oninput="updateOPR()" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed transition">Meningkatkan kesedaran murid terhadap kepentingan kerjaya berteraskan sains dan teknologi serta melahirkan generasi yang celik inovasi dan berfikiran kritis.</textarea>
             </div>
           </div>
         </div>
@@ -444,9 +467,9 @@
           <div class="flex items-center justify-between">
             <h2 class="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
               <i data-lucide="image" class="w-4 h-4 text-blue-600"></i>
-              4. Gambar Dokumentasi (2 - 4 Foto)
+              4. Gambar Dokumentasi (1 - 4 Foto)
             </h2>
-            <span id="photo-count-badge" class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-300">4 / 4 Gambar</span>
+            <span id="photo-count-badge" class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-300">0 / 4 Gambar</span>
           </div>
 
           <div class="space-y-3">
@@ -462,9 +485,12 @@
             </div>
 
             <!-- Image Previews Container Grid -->
-            <div id="image-preview-list" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div id="image-preview-list" class="grid grid-cols-2 sm:grid-cols-4 gap-3 empty:hidden">
               <!-- Dynamically Populated Cards -->
             </div>
+            <button type="button" id="btn-clear-photos" onclick="clearPhotos()" class="hidden w-full py-1.5 text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition border border-red-200">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5 inline mr-1"></i> Buang Semua Gambar
+            </button>
           </div>
         </div>
 
@@ -479,21 +505,21 @@
             <!-- Disediakan Oleh -->
             <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-xs font-bold text-slate-800 block">Disediakan Oleh:</span>
-              <input type="text" id="input-disediakan-nama" oninput="updateOPR()" value="LAI YIN LEE" placeholder="Nama Pegawai" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disediakan-nama" oninput="updateOPR()" value="LAI YIN LEE" placeholder="Nama Pegawai" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition uppercase">
               <input type="text" id="input-disediakan-jawatan" oninput="updateOPR()" value="Penyelaras Program STEM" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
 
             <!-- Disemak Oleh -->
             <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-xs font-bold text-slate-800 block">Disemak Oleh:</span>
-              <input type="text" id="input-disemak-nama" oninput="updateOPR()" value="IRENE WAY" placeholder="Nama Penolong Kanan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disemak-nama" oninput="updateOPR()" value="IRENE WAY" placeholder="Nama Penolong Kanan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition uppercase">
               <input type="text" id="input-disemak-jawatan" oninput="updateOPR()" value="Penolong Kanan Pentadbiran" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
 
             <!-- Disahkan Oleh -->
             <div class="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               <span class="text-xs font-bold text-slate-800 block">Disahkan Oleh:</span>
-              <input type="text" id="input-disahkan-nama" oninput="updateOPR()" value="LEOW SOOK TIN" placeholder="Nama Guru Besar / Pengetua" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+              <input type="text" id="input-disahkan-nama" oninput="updateOPR()" value="LEOW SOOK TIN" placeholder="Nama Guru Besar / Pengetua" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition uppercase">
               <input type="text" id="input-disahkan-jawatan" oninput="updateOPR()" value="Guru Besar" placeholder="Jawatan" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
             </div>
           </div>
@@ -522,17 +548,16 @@
       <div id="opr-preview-container" class="w-full flex justify-center overflow-x-auto pb-8 a4-preview-wrapper">
         <div class="a4-preview border border-slate-300 text-slate-900 text-[9px] leading-tight">
           
-          <div>
-            <!-- Header KPM Standard -->
-            <div class="border-b-2 border-slate-900 pb-1 mb-1 flex items-center justify-between gap-2">
+          <div class="flex-1 flex flex-col">
+            <!-- Header KPM Standard (REMOVED: "LAPORAN SATU HALAMAN...") -->
+            <div class="border-b-2 border-slate-900 pb-1 mb-1.5 flex items-center justify-between gap-2 shrink-0">
               <div id="view-logo-container" class="w-[60px] h-[60px] flex items-center justify-center shrink-0">
-                <img id="view-logo-img" src="https://app.pandai.org/uploads/school/NBC4046.jpg" alt="Logo Header" class="max-h-full max-w-full object-contain">
+                <img id="view-logo-img" src="https://app.pandai.org/uploads/school/NBC4046.jpg" onerror="this.src='https://placehold.co/100x100/ffffff/cccccc?text=Logo'" alt="Logo Header" class="max-h-full max-w-full object-contain">
               </div>
 
               <div class="text-center flex-1">
-                <h2 id="view-sekolah" class="font-extrabold text-xs tracking-wide uppercase text-slate-900">SJK (C) PEI HUA</h2>
-                <h3 class="font-bold text-[10px] uppercase tracking-wider text-slate-800">LAPORAN SATU HALAMAN (ONE PAGE REPORT - OPR)</h3>
-                <p class="text-[8.5px] font-semibold text-slate-600 uppercase" id="view-unit-anjuran">UNIT KURIKULUM | PERINGKAT SEKOLAH</p>
+                <h2 id="view-sekolah" class="font-extrabold text-[13px] tracking-wide uppercase text-slate-900">SEKOLAH JENIS KEBANGSAAN (CINA) PEI HUA</h2>
+                <p class="text-[9px] font-semibold text-slate-600 uppercase mt-0.5" id="view-unit-anjuran">UNIT KURIKULUM | PERINGKAT SEKOLAH</p>
               </div>
 
               <div class="w-[60px] h-[60px] shrink-0 opacity-0">
@@ -541,206 +566,175 @@
             </div>
 
             <!-- Program Title Banner -->
-            <div class="bg-slate-100 border border-slate-800 p-1 text-center mb-1">
-              <h1 id="view-program" class="font-bold text-[10.5px] uppercase text-slate-900 leading-tight">BENGKEL PEMERKASAAN STEM & INOVASI SAINS 2026</h1>
+            <div class="bg-slate-100 border border-slate-800 p-1.5 text-center mb-1.5 shrink-0">
+              <h1 id="view-program" class="font-bold text-[11px] uppercase text-slate-900 leading-tight">BENGKEL PEMERKASAAN STEM & INOVASI SAINS 2026</h1>
             </div>
 
             <!-- Maklumat Utama Grid / Table -->
-            <table class="w-full border-collapse border border-slate-800 mb-1 text-[8.5px]">
+            <table class="w-full border-collapse border border-slate-800 mb-2 text-[9px] shrink-0">
               <tbody>
                 <tr class="border-b border-slate-800">
-                  <td class="bg-slate-100 font-bold p-0.5 px-1 border-r border-slate-800 w-1/6">Tarikh</td>
-                  <td id="view-tarikh" class="p-0.5 px-1 border-r border-slate-800 w-2/6">6 NOVEMBER 2026</td>
-                  <td class="bg-slate-100 font-bold p-0.5 px-1 border-r border-slate-800 w-1/6">Masa</td>
-                  <td id="view-masa" class="p-0.5 px-1 w-2/6">8.30 PAGI - 1.00 TENGARI</td>
+                  <td class="bg-slate-100 font-bold p-1 px-1.5 border-r border-slate-800 w-1/6">Tarikh</td>
+                  <td id="view-tarikh" class="p-1 px-1.5 border-r border-slate-800 w-2/6 uppercase">6 NOVEMBER 2026</td>
+                  <td class="bg-slate-100 font-bold p-1 px-1.5 border-r border-slate-800 w-1/6">Masa</td>
+                  <td id="view-masa" class="p-1 px-1.5 w-2/6 uppercase">8.30 PAGI - 1.00 TENGAH HARI</td>
                 </tr>
                 <tr class="border-b border-slate-800">
-                  <td class="bg-slate-100 font-bold p-0.5 px-1 border-r border-slate-800">Tempat</td>
-                  <td id="view-tempat" class="p-0.5 px-1 border-r border-slate-800">STEM Lab</td>
-                  <td class="bg-slate-100 font-bold p-0.5 px-1 border-r border-slate-800">Sasaran</td>
-                  <td id="view-sasaran" class="p-0.5 px-1">60 Murid Tahun 4 & 5 serta 8 Guru Pembimbing</td>
+                  <td class="bg-slate-100 font-bold p-1 px-1.5 border-r border-slate-800">Tempat</td>
+                  <td id="view-tempat" class="p-1 px-1.5 border-r border-slate-800 uppercase">STEM LAB</td>
+                  <td class="bg-slate-100 font-bold p-1 px-1.5 border-r border-slate-800">Kehadiran</td>
+                  <td id="view-sasaran" class="p-1 px-1.5 uppercase">60 MURID TAHUN 4 & 5 SERTA 8 GURU PEMBIMBING</td>
                 </tr>
                 <tr>
-                  <td class="bg-slate-100 font-bold p-0.5 px-1 border-r border-slate-800">Tetamu / VIP</td>
-                  <td id="view-perasmi" colspan="3" class="p-0.5 px-1">En. Rosli bin Ahmad (Pegawai SISC+ PPD)</td>
+                  <td class="bg-slate-100 font-bold p-1 px-1.5 border-r border-slate-800">Perasmi / VIP</td>
+                  <td colspan="3" id="view-perasmi" class="p-1 px-1.5 uppercase">EN. ROSLI BIN AHMAD (PEGAWAI SISC+ PPD)</td>
                 </tr>
               </tbody>
             </table>
 
-            <!-- Content Grid: Objektif & Pengisian -->
-            <div class="grid grid-cols-2 gap-2 mb-1.5">
-              <!-- Objektif -->
-              <div class="border border-slate-800 p-1.5 bg-white flex flex-col">
-                <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">1. Objektif Program</div>
-                <div id="view-objektif" class="whitespace-pre-line text-slate-800 flex-1 text-[8px] leading-snug"></div>
+            <!-- Content Grid 1: Objektif & Ringkasan -->
+            <div class="grid grid-cols-2 gap-2 mb-2 shrink-0">
+              <div class="border border-slate-800 flex flex-col h-full">
+                <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase">1. Objektif Program</div>
+                <div id="view-objektif" class="p-1.5 whitespace-pre-line leading-[1.35] flex-1"></div>
               </div>
-
-              <!-- Pengisian Aktiviti -->
-              <div class="border border-slate-800 p-1.5 bg-white flex flex-col">
-                <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">2. Ringkasan Pelaksanaan / Pengisian</div>
-                <div id="view-ringkasan" class="whitespace-pre-line text-slate-800 flex-1 text-[8px] leading-snug"></div>
+              <div class="border border-slate-800 flex flex-col h-full">
+                <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase">2. Ringkasan Pengisian</div>
+                <div id="view-ringkasan" class="p-1.5 whitespace-pre-line leading-[1.35] flex-1"></div>
               </div>
             </div>
 
-            <!-- Analysis Grid: SWOT / Impak -->
-            <div class="grid grid-cols-2 gap-2 mb-1.5">
-              <!-- Kekuatan & Kelemahan -->
-              <div class="space-y-1.5">
-                <div class="border border-slate-800 p-1.5 bg-white">
-                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">3. Kekuatan (Strengths)</div>
-                  <div id="view-kekuatan" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
-                </div>
-                <div class="border border-slate-800 p-1.5 bg-white">
-                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">4. Kelemahan (Weaknesses)</div>
-                  <div id="view-kelemahan" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
-                </div>
+            <!-- Content Grid 2: Kekuatan & Kelemahan -->
+            <div class="grid grid-cols-2 gap-2 mb-2 shrink-0">
+              <div class="border border-slate-800 flex flex-col h-full">
+                <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase">3. Kekuatan</div>
+                <div id="view-kekuatan" class="p-1.5 whitespace-pre-line leading-[1.35] flex-1"></div>
               </div>
-
-              <!-- Penambahbaikan & Impak -->
-              <div class="space-y-1.5">
-                <div class="border border-slate-800 p-1.5 bg-white">
-                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">5. Cadangan Penambahbaikan</div>
-                  <div id="view-penambahbaikan" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
-                </div>
-                <div class="border border-slate-800 p-1.5 bg-white">
-                  <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">6. Impak Program (Outcomes)</div>
-                  <div id="view-impak" class="whitespace-pre-line text-slate-800 text-[8px] leading-snug"></div>
-                </div>
+              <div class="border border-slate-800 flex flex-col h-full">
+                <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase">4. Kelemahan</div>
+                <div id="view-kelemahan" class="p-1.5 whitespace-pre-line leading-[1.35] flex-1"></div>
               </div>
             </div>
 
-            <!-- Section 4: Gambar Dokumentasi Grid -->
-            <div class="border border-slate-800 p-1 mb-1.5">
-              <div class="bg-slate-800 text-white font-bold text-[8.5px] px-1 py-0.5 uppercase mb-1">7. Gambar Dokumentasi Aktiviti</div>
-              <div id="view-photo-grid" class="grid grid-cols-2 gap-1">
-                <!-- Dynamically populated images -->
+            <!-- Content Grid 3: Penambahbaikan & Impak -->
+            <div class="grid grid-cols-2 gap-2 mb-2 shrink-0">
+              <div class="border border-slate-800 flex flex-col h-full">
+                <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase">5. Cadangan Penambahbaikan</div>
+                <div id="view-penambahbaikan" class="p-1.5 whitespace-pre-line leading-[1.35] flex-1"></div>
+              </div>
+              <div class="border border-slate-800 flex flex-col h-full">
+                <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase">6. Impak (Outcomes)</div>
+                <div id="view-impak" class="p-1.5 whitespace-pre-line leading-[1.35] flex-1"></div>
               </div>
             </div>
-          </div>
 
-          <!-- Section 5: Signatures Section -->
-          <div class="border-t-2 border-slate-800 pt-1 mt-auto">
-            <div class="grid grid-cols-3 gap-2 text-[8px]">
-              <!-- Disediakan -->
-              <div class="flex flex-col justify-between h-10">
-                <div>
-                  <span class="font-semibold text-slate-700 block">Disediakan Oleh:</span>
-                </div>
-                <div>
-                  <div class="border-b border-slate-400 w-3/4 mb-0.5"></div>
-                  <p id="view-disediakan-nama" class="font-bold text-slate-900 uppercase text-[7.5px]"></p>
-                  <p id="view-disediakan-jawatan" class="text-[7px] text-slate-600"></p>
-                </div>
+            <!-- Photo Grid -->
+            <div class="border border-slate-800 flex flex-col flex-1 min-h-0">
+              <div class="bg-slate-100 font-bold text-[9.5px] border-b border-slate-800 p-1 px-1.5 uppercase shrink-0">
+                7. Gambar Dokumentasi Aktiviti
               </div>
-
-              <!-- Disemak -->
-              <div class="flex flex-col justify-between h-10">
-                <div>
-                  <span class="font-semibold text-slate-700 block">Disemak Oleh:</span>
-                </div>
-                <div>
-                  <div class="border-b border-slate-400 w-3/4 mb-0.5"></div>
-                  <p id="view-disemak-nama" class="font-bold text-slate-900 uppercase text-[7.5px]"></p>
-                  <p id="view-disemak-jawatan" class="text-[7px] text-slate-600"></p>
-                </div>
+              <div id="view-photos-grid" class="flex-1 p-2 grid grid-cols-2 gap-2 min-h-0 place-items-center bg-slate-50/50">
+                <!-- Placeholders or uploaded images injected here by JS -->
+                <div class="w-full h-full border border-dashed border-slate-300 flex items-center justify-center text-slate-400">Ruang Gambar 1</div>
+                <div class="w-full h-full border border-dashed border-slate-300 flex items-center justify-center text-slate-400">Ruang Gambar 2</div>
               </div>
+            </div>
 
-              <!-- Disahkan -->
-              <div class="flex flex-col justify-between h-10">
-                <div>
-                  <span class="font-semibold text-slate-700 block">Disahkan Oleh:</span>
-                </div>
-                <div>
-                  <div class="border-b border-slate-400 w-3/4 mb-0.5"></div>
-                  <p id="view-disahkan-nama" class="font-bold text-slate-900 uppercase text-[7.5px]"></p>
-                  <p id="view-disahkan-jawatan" class="text-[7px] text-slate-600"></p>
-                </div>
+          </div> <!-- End Flex 1 Container -->
+
+          <!-- Signatures (Fixed at bottom) -->
+          <div class="mt-3 pt-2 border-t-2 border-slate-900 shrink-0">
+            <div class="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p class="font-bold text-[8.5px] uppercase mb-10">Disediakan Oleh,</p>
+                <div class="border-b border-slate-400 w-3/4 mx-auto mb-1"></div>
+                <p id="view-disediakan-nama" class="font-bold uppercase text-[9px]">LAI YIN LEE</p>
+                <p id="view-disediakan-jawatan" class="text-[8.5px] uppercase">Penyelaras Program STEM</p>
+              </div>
+              <div>
+                <p class="font-bold text-[8.5px] uppercase mb-10">Disemak Oleh,</p>
+                <div class="border-b border-slate-400 w-3/4 mx-auto mb-1"></div>
+                <p id="view-disemak-nama" class="font-bold uppercase text-[9px]">IRENE WAY</p>
+                <p id="view-disemak-jawatan" class="text-[8.5px] uppercase">Penolong Kanan Pentadbiran</p>
+              </div>
+              <div>
+                <p class="font-bold text-[8.5px] uppercase mb-10">Disahkan Oleh,</p>
+                <div class="border-b border-slate-400 w-3/4 mx-auto mb-1"></div>
+                <p id="view-disahkan-nama" class="font-bold uppercase text-[9px]">LEOW SOOK TIN</p>
+                <p id="view-disahkan-jawatan" class="text-[8.5px] uppercase">Guru Besar</p>
               </div>
             </div>
           </div>
-
+          
         </div>
       </div>
     </div>
-
   </main>
 
-  <!-- Notification Toast Container -->
-  <div id="toast" class="no-print fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-xl hidden transition-all duration-300 flex items-center space-x-2 border border-slate-700">
-    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-    <span id="toast-message">Mesej Notifikasi</span>
-  </div>
-
-  <!-- Application Logic JavaScript -->
   <script>
-    // Initial Dynamic Photos State
-    let uploadedPhotos = [
-      {
-        id: 1,
-        url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
-        caption: 'Pendaftaran & Taklimat Ringkas Program'
-      },
-      {
-        id: 2,
-        url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
-        caption: 'Slot Ceramah & Penerangan Modul Utama'
-      },
-      {
-        id: 3,
-        url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80',
-        caption: 'Sesi Amali & Perbincangan Kumpulan'
-      },
-      {
-        id: 4,
-        url: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80',
-        caption: 'Majlis Penutupan & Penyampaian Sijil'
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Setup initial date if not set
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('input-tarikh-date');
+      if (!dateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
       }
-    ];
+      updateOPR();
+    });
 
-    // Current active tab state for mobile
-    let activeMobileTab = 'form';
+    // Custom Modal System (Replaces alert and confirm)
+    function showModal(title, message, isConfirm = false, onConfirm = null) {
+      const modal = document.getElementById('custom-modal');
+      const titleEl = document.getElementById('modal-title');
+      const messageEl = document.getElementById('modal-message');
+      const btnCancel = document.getElementById('modal-btn-cancel');
+      const btnOk = document.getElementById('modal-btn-ok');
+      const icon = document.getElementById('modal-icon');
 
-    // Preset Header Logos
-    const logoPresets = {
-      kpm: "https://www.moe.gov.my/storage/files/shares/images/logo/logo-korporat-kpm-bm.jpg",
-      jpn: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Jabatan_Pendidikan_Negeri_Selangor.png/300px-Jabatan_Pendidikan_Negeri_Selangor.png"
-    };
+      titleEl.textContent = title;
+      messageEl.textContent = message;
 
-    // Helper Selector Shortcut
-    function id(elemId) {
-      return document.getElementById(elemId);
-    }
-
-    // Dynamic Responsive Auto Switcher Listener
-    function handleViewportResize() {
-      const isDesktop = window.innerWidth >= 1024;
-      const formEl = id('opr-form-container');
-      const previewEl = id('preview-wrapper');
-
-      if (!formEl || !previewEl) return;
-
-      if (isDesktop) {
-        // Desktop View: Display both side-by-side
-        formEl.classList.remove('hidden');
-        previewEl.classList.remove('hidden');
-        previewEl.classList.add('flex');
+      // Adjust styling based on context
+      if (title.toLowerCase().includes('ralat')) {
+        icon.className = 'p-2 bg-red-100 text-red-600 rounded-full';
+        icon.innerHTML = '<i data-lucide="alert-triangle" class="w-5 h-5"></i>';
+      } else if (isConfirm) {
+        icon.className = 'p-2 bg-amber-100 text-amber-600 rounded-full';
+        icon.innerHTML = '<i data-lucide="help-circle" class="w-5 h-5"></i>';
       } else {
-        // Mobile View: Respect current active tab
-        switchTab(activeMobileTab);
+        icon.className = 'p-2 bg-blue-100 text-blue-600 rounded-full';
+        icon.innerHTML = '<i data-lucide="info" class="w-5 h-5"></i>';
       }
+      lucide.createIcons();
+
+      // Setup actions
+      btnOk.onclick = () => {
+        modal.classList.add('hidden');
+        if (onConfirm) onConfirm();
+      };
+
+      if (isConfirm) {
+        btnCancel.classList.remove('hidden');
+        btnCancel.onclick = () => modal.classList.add('hidden');
+      } else {
+        btnCancel.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
     }
 
-    // Toggle Mobile Drawer Navigation
-    function toggleMobileDrawer(open) {
-      const drawer = id('mobile-drawer');
-      const backdrop = id('mobile-drawer-backdrop');
-
-      if (!drawer || !backdrop) return;
-
-      if (open) {
+    // Mobile Drawer Toggle
+    function toggleMobileDrawer(show) {
+      const drawer = document.getElementById('mobile-drawer');
+      const backdrop = document.getElementById('mobile-drawer-backdrop');
+      
+      if (show) {
+        drawer.classList.remove('-translate-x-full');
         backdrop.classList.remove('hidden');
         setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
-        drawer.classList.remove('-translate-x-full');
       } else {
         drawer.classList.add('-translate-x-full');
         backdrop.classList.add('opacity-0');
@@ -748,347 +742,399 @@
       }
     }
 
-    // Default Date Selector to Today's Date
-    function setDefaultDateToday() {
-      const dateEl = id('input-tarikh-date');
-      if (!dateEl) return;
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      dateEl.value = `${year}-${month}-${day}`;
+    // Switch Tabs for Mobile View
+    function switchTab(tabName) {
+      const formContainer = document.getElementById('opr-form-container');
+      const previewWrapper = document.getElementById('preview-wrapper');
+      const btnForm = document.getElementById('btn-tab-form');
+      const btnPreview = document.getElementById('btn-tab-preview');
+
+      if (window.innerWidth >= 1024) return; // Only apply on mobile/tablet
+
+      if (tabName === 'form') {
+        formContainer.classList.remove('hidden');
+        previewWrapper.classList.add('hidden');
+        previewWrapper.classList.remove('flex');
+        
+        btnForm.classList.replace('text-slate-700', 'text-white');
+        btnForm.classList.replace('hover:bg-slate-300', 'bg-blue-600');
+        btnForm.classList.add('shadow-sm');
+        
+        btnPreview.classList.replace('text-white', 'text-slate-700');
+        btnPreview.classList.replace('bg-blue-600', 'hover:bg-slate-300');
+        btnPreview.classList.remove('shadow-sm');
+      } else {
+        formContainer.classList.add('hidden');
+        previewWrapper.classList.remove('hidden');
+        previewWrapper.classList.add('flex');
+        
+        btnPreview.classList.replace('text-slate-700', 'text-white');
+        btnPreview.classList.replace('hover:bg-slate-300', 'bg-blue-600');
+        btnPreview.classList.add('shadow-sm');
+        
+        btnForm.classList.replace('text-white', 'text-slate-700');
+        btnForm.classList.replace('bg-blue-600', 'hover:bg-slate-300');
+        btnForm.classList.remove('shadow-sm');
+      }
     }
 
-    // Format Date String to Formal Uppercase Malay Text
-    function formatMalayDate(dateString) {
-      if (!dateString) return "-";
-      const parts = dateString.split("-");
-      if (parts.length !== 3) return dateString;
+    // Handle Resize to ensure desktop shows both columns
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) {
+        document.getElementById('opr-form-container').classList.remove('hidden');
+        document.getElementById('preview-wrapper').classList.remove('hidden');
+        document.getElementById('preview-wrapper').classList.add('flex');
+      } else {
+        // Revert to form view on resize down
+        switchTab('form');
+      }
+    });
 
-      const day = parseInt(parts[2], 10);
-      const monthIdx = parseInt(parts[1], 10) - 1;
-      const year = parts[0];
-
-      const bulanMelayu = [
-        "JANUARI", "FEBRUARI", "MAC", "APRIL", "MEI", "JUN",
-        "JULAI", "OGOS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DISEMBER"
+    // Formatting date helper: YYYY-MM-DD -> DD/MM/YYYY
+    function formatDateMy(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      
+      const months = [
+        "Januari", "Februari", "Mac", "April", "Mei", "Jun", 
+        "Julai", "Ogos", "September", "Oktober", "November", "Disember"
       ];
-
-      return `${day} ${bulanMelayu[monthIdx] || ''} ${year}`;
+      
+      const day = d.getDate();
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+      
+      return `${day} ${month} ${year}`.toUpperCase();
     }
 
-    // Handle Custom Location Entry Visibility
+    // Handle Custom Location Toggle
     function handleTempatChange() {
-      const selectEl = id('input-tempat-select');
-      const customContainer = id('custom-tempat-container');
-      if (!selectEl || !customContainer) return;
+      const select = document.getElementById('input-tempat-select');
+      const customContainer = document.getElementById('custom-tempat-container');
       
-      if (selectEl.value === 'custom') {
+      if (select.value === 'custom') {
         customContainer.classList.remove('hidden');
       } else {
         customContainer.classList.add('hidden');
       }
     }
 
-    // Initialize application on load & attach event listeners
-    window.onload = function() {
-      lucide.createIcons();
-      setDefaultDateToday();
-      autoFillInitialAI();
-      renderPhotoControls();
-      updateOPR();
-      handleViewportResize();
-
-      // Listen to window resize events for instant responsive auto-switching
-      window.addEventListener('resize', handleViewportResize);
-    };
-
-    // Switch Mobile Tabs
-    function switchTab(tab) {
-      activeMobileTab = tab;
-      const isDesktop = window.innerWidth >= 1024;
-      const formEl = id('opr-form-container');
-      const previewEl = id('preview-wrapper');
-      const btnForm = id('btn-tab-form');
-      const btnPreview = id('btn-tab-preview');
-
-      if (!formEl || !previewEl) return;
-
-      if (isDesktop) return; // Keep side-by-side on desktop
-
-      if (tab === 'form') {
-        formEl.classList.remove('hidden');
-        previewEl.classList.add('hidden');
-        previewEl.classList.remove('flex');
-        if (btnForm && btnPreview) {
-          btnForm.className = "flex-1 py-2 text-center rounded-lg bg-blue-600 text-white font-semibold transition shadow-sm";
-          btnPreview.className = "flex-1 py-2 text-center rounded-lg text-slate-700 hover:bg-slate-300 transition";
-        }
-      } else {
-        formEl.classList.add('hidden');
-        previewEl.classList.remove('hidden');
-        previewEl.classList.add('flex');
-        if (btnForm && btnPreview) {
-          btnPreview.className = "flex-1 py-2 text-center rounded-lg bg-blue-600 text-white font-semibold transition shadow-sm";
-          btnForm.className = "flex-1 py-2 text-center rounded-lg text-slate-700 hover:bg-slate-300 transition";
-        }
-      }
-    }
-
-    // Dynamic Header Logo Handling
-    function toggleLogoInput() {
-      const typeEl = id('input-logo-type');
-      const customContainer = id('custom-logo-container');
-      if (!typeEl || !customContainer) return;
-
-      if (typeEl.value === 'custom') {
-        customContainer.classList.remove('hidden');
-      } else {
-        customContainer.classList.add('hidden');
-      }
-    }
-
-    // Sync Input Form Data with A4 Live Preview
+    // Main Function to Sync Form -> Preview
     function updateOPR() {
-      // Header & Logo
-      if (id('view-sekolah') && id('input-sekolah')) {
-        id('view-sekolah').innerText = id('input-sekolah').value || 'NAMA SEKOLAH / INSTITUSI';
+      // 1. Header & Basics
+      document.getElementById('view-sekolah').textContent = document.getElementById('input-sekolah').value || "-";
+      document.getElementById('view-logo-img').src = document.getElementById('input-logo-url').value;
+      
+      // 2. Program Details
+      document.getElementById('view-program').textContent = document.getElementById('input-program').value || "NAMA PROGRAM";
+      
+      const unit = document.getElementById('input-unit').value;
+      const anjuran = document.getElementById('input-anjuran').value;
+      document.getElementById('view-unit-anjuran').textContent = `UNIT ${unit} | ${anjuran}`.toUpperCase();
+      
+      const rawDate = document.getElementById('input-tarikh-date').value;
+      document.getElementById('view-tarikh').textContent = formatDateMy(rawDate) || "-";
+      document.getElementById('view-masa').textContent = document.getElementById('input-masa').value || "-";
+      
+      const selectTempat = document.getElementById('input-tempat-select').value;
+      if (selectTempat === 'custom') {
+        document.getElementById('view-tempat').textContent = document.getElementById('input-tempat-custom').value || "-";
+      } else {
+        document.getElementById('view-tempat').textContent = selectTempat;
       }
       
-      const logoImg = id('view-logo-img');
-      const logoContainer = id('view-logo-container');
-      const logoUrlInput = id('input-logo-url');
-
-      if (logoContainer && logoImg) {
-        logoContainer.classList.remove('hidden');
-        logoImg.src = (logoUrlInput && logoUrlInput.value.trim()) ? logoUrlInput.value.trim() : "https://app.pandai.org/uploads/school/NBC4046.jpg";
-      }
-
-      // Metadata & Units
-      const unit = id('input-unit') ? id('input-unit').value : 'Kurikulum';
-      const anjuran = id('input-anjuran') ? id('input-anjuran').value : 'Sekolah';
-      if (id('view-unit-anjuran')) {
-        id('view-unit-anjuran').innerText = `UNIT ${unit.toUpperCase()} | ${anjuran.toUpperCase()}`;
-      }
+      document.getElementById('view-sasaran').textContent = document.getElementById('input-sasaran').value || "-";
       
-      if (id('view-program') && id('input-program')) {
-        id('view-program').innerText = id('input-program').value || 'NAMA PROGRAM / AKTIVITI';
-      }
+      const perasmiVal = document.getElementById('input-perasmi').value.trim();
+      document.getElementById('view-perasmi').textContent = perasmiVal ? perasmiVal : "TIADA";
       
-      // Date Processing
-      const rawDate = id('input-tarikh-date') ? id('input-tarikh-date').value : '';
-      if (id('view-tarikh')) {
-        id('view-tarikh').innerText = formatMalayDate(rawDate);
-      }
+      // 3. Content Sections
+      document.getElementById('view-objektif').textContent = document.getElementById('input-objektif').value;
+      document.getElementById('view-ringkasan').textContent = document.getElementById('input-ringkasan').value;
+      document.getElementById('view-kekuatan').textContent = document.getElementById('input-kekuatan').value;
+      document.getElementById('view-kelemahan').textContent = document.getElementById('input-kelemahan').value;
+      document.getElementById('view-penambahbaikan').textContent = document.getElementById('input-penambahbaikan').value;
+      document.getElementById('view-impak').textContent = document.getElementById('input-impak').value;
 
-      if (id('view-masa') && id('input-masa')) {
-        id('view-masa').innerText = id('input-masa').value || '-';
-      }
+      // 5. Signatures
+      document.getElementById('view-disediakan-nama').textContent = document.getElementById('input-disediakan-nama').value || "NAMA";
+      document.getElementById('view-disediakan-jawatan').textContent = document.getElementById('input-disediakan-jawatan').value || "JAWATAN";
       
-      // Location Processing
-      const tempatSelect = id('input-tempat-select') ? id('input-tempat-select').value : '';
-      if (id('view-tempat')) {
-        if (tempatSelect === 'custom') {
-          id('view-tempat').innerText = (id('input-tempat-custom') && id('input-tempat-custom').value) || 'Tempat Tersuai';
-        } else {
-          id('view-tempat').innerText = tempatSelect || '-';
-        }
-      }
-
-      if (id('view-sasaran') && id('input-sasaran')) id('view-sasaran').innerText = id('input-sasaran').value || '-';
-      if (id('view-perasmi') && id('input-perasmi')) id('view-perasmi').innerText = id('input-perasmi').value || '-';
-
-      // Section Content
-      if (id('view-objektif') && id('input-objektif')) id('view-objektif').innerText = id('input-objektif').value || '-';
-      if (id('view-ringkasan') && id('input-ringkasan')) id('view-ringkasan').innerText = id('input-ringkasan').value || '-';
-      if (id('view-kekuatan') && id('input-kekuatan')) id('view-kekuatan').innerText = id('input-kekuatan').value || '-';
-      if (id('view-kelemahan') && id('input-kelemahan')) id('view-kelemahan').innerText = id('input-kelemahan').value || '-';
-      if (id('view-penambahbaikan') && id('input-penambahbaikan')) id('view-penambahbaikan').innerText = id('input-penambahbaikan').value || '-';
-      if (id('view-impak') && id('input-impak')) id('view-impak').innerText = id('input-impak').value || '-';
-
-      // Signatures
-      if (id('view-disediakan-nama') && id('input-disediakan-nama')) id('view-disediakan-nama').innerText = id('input-disediakan-nama').value || 'NAMA PEGAWAI';
-      if (id('view-disediakan-jawatan') && id('input-disediakan-jawatan')) id('view-disediakan-jawatan').innerText = id('input-disediakan-jawatan').value || 'JAWATAN';
-
-      if (id('view-disemak-nama') && id('input-disemak-nama')) id('view-disemak-nama').innerText = id('input-disemak-nama').value || 'NAMA PENOLONG KANAN';
-      if (id('view-disemak-jawatan') && id('input-disemak-jawatan')) id('view-disemak-jawatan').innerText = id('input-disemak-jawatan').value || 'JAWATAN';
-
-      if (id('view-disahkan-nama') && id('input-disahkan-nama')) id('view-disahkan-nama').innerText = id('input-disahkan-nama').value || 'NAMA GURU BESAR / PENGETUA';
-      if (id('view-disahkan-jawatan') && id('input-disahkan-jawatan')) id('view-disahkan-jawatan').innerText = id('input-disahkan-jawatan').value || 'JAWATAN';
-
-      renderPhotoGridPreview();
+      document.getElementById('view-disemak-nama').textContent = document.getElementById('input-disemak-nama').value || "NAMA";
+      document.getElementById('view-disemak-jawatan').textContent = document.getElementById('input-disemak-jawatan').value || "JAWATAN";
+      
+      document.getElementById('view-disahkan-nama').textContent = document.getElementById('input-disahkan-nama').value || "NAMA";
+      document.getElementById('view-disahkan-jawatan').textContent = document.getElementById('input-disahkan-jawatan').value || "JAWATAN";
     }
 
-    // Photo Upload & Grid Management Controls
-    function handleImageUpload(e) {
-      const files = e.target.files;
-      if (!files || !files.length) return;
+    // Image Upload Logic (Store base64 images)
+    let uploadedPhotos = [];
 
-      if (uploadedPhotos.length + files.length > 4) {
-        showToast("Maksimum 4 gambar sahaja dibenarkan bagi kekal format 1 A4.");
+    function handleImageUpload(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+      
+      // We only allow up to 4 photos total
+      const remainingSlots = 4 - uploadedPhotos.length;
+      const filesToProcess = files.slice(0, remainingSlots);
+
+      if (files.length > remainingSlots && remainingSlots === 0) {
+        showModal("Ralat Gambar", "Maksimum 4 gambar sahaja dibenarkan.");
+        return;
       }
 
-      Array.from(files).slice(0, 4 - uploadedPhotos.length).forEach(file => {
+      filesToProcess.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+
         const reader = new FileReader();
-        reader.onload = function(evt) {
-          uploadedPhotos.push({
-            id: Date.now() + Math.random(),
-            url: evt.target.result,
-            caption: 'Gambar Aktiviti ' + (uploadedPhotos.length + 1)
-          });
-          renderPhotoControls();
-          updateOPR();
+        reader.onload = (e) => {
+          uploadedPhotos.push(e.target.result);
+          renderPhotos();
         };
         reader.readAsDataURL(file);
       });
+      
+      // Reset input so same file can be selected again if removed
+      event.target.value = ''; 
     }
 
     function removePhoto(index) {
-      if (uploadedPhotos.length <= 2) {
-        showToast("Minimum 2 gambar diperlukan untuk susun atur laporan OPR.");
+      uploadedPhotos.splice(index, 1);
+      renderPhotos();
+    }
+
+    function clearPhotos() {
+      uploadedPhotos = [];
+      renderPhotos();
+    }
+
+    function renderPhotos() {
+      const previewList = document.getElementById('image-preview-list');
+      const viewGrid = document.getElementById('view-photos-grid');
+      const countBadge = document.getElementById('photo-count-badge');
+      const btnClear = document.getElementById('btn-clear-photos');
+      
+      countBadge.textContent = `${uploadedPhotos.length} / 4 Gambar`;
+      
+      // Update form thumbnail preview
+      previewList.innerHTML = '';
+      if (uploadedPhotos.length > 0) {
+        btnClear.classList.remove('hidden');
+        uploadedPhotos.forEach((src, idx) => {
+          previewList.innerHTML += `
+            <div class="relative group aspect-[4/3] rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+              <img src="${src}" class="w-full h-full object-cover" />
+              <button onclick="removePhoto(${idx})" class="absolute top-1 right-1 bg-red-500/90 hover:bg-red-600 text-white p-1 rounded-md opacity-0 group-hover:opacity-100 transition shadow">
+                <i data-lucide="x" class="w-3 h-3"></i>
+              </button>
+            </div>
+          `;
+        });
+        lucide.createIcons();
+      } else {
+        btnClear.classList.add('hidden');
+      }
+
+      // Update A4 Document Grid
+      viewGrid.innerHTML = '';
+      if (uploadedPhotos.length === 0) {
+        viewGrid.innerHTML = `
+          <div class="w-full h-full border border-dashed border-slate-300 flex items-center justify-center text-slate-400 text-[10px]">Ruang Gambar 1</div>
+          <div class="w-full h-full border border-dashed border-slate-300 flex items-center justify-center text-slate-400 text-[10px]">Ruang Gambar 2</div>
+        `;
+      } else {
+        // Adjust grid columns based on count to optimize A4 space
+        let gridClass = 'grid-cols-2'; 
+        uploadedPhotos.forEach((src) => {
+          viewGrid.innerHTML += `
+            <div class="w-full h-full bg-slate-200 flex items-center justify-center overflow-hidden border border-slate-300">
+              <img src="${src}" class="w-full h-full object-cover" />
+            </div>
+          `;
+        });
+      }
+    }
+
+    // Reset Form
+    function promptResetForm() {
+      showModal("Pengesahan Tindakan", "Adakah anda pasti untuk reset semua maklumat pada borang?", true, () => {
+        document.getElementById('opr-form').reset();
+        
+        // Reset date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('input-tarikh-date').value = today;
+        
+        // Ensure custom tempat is hidden
+        handleTempatChange();
+        
+        // Clear images
+        clearPhotos();
+        
+        // Trigger update
+        updateOPR();
+        
+        // Reset AI button state if needed
+        document.querySelectorAll('.ai-btn i').forEach(icon => {
+          icon.setAttribute('data-lucide', 'sparkles');
+          icon.classList.remove('animate-spin');
+        });
+        lucide.createIcons();
+      });
+    }
+
+    // --- Gemini API Integration ---
+    // Note: To adhere to platform rules, the apiKey is left blank here.
+    const apiKey = ""; 
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+    // Generate specific field via AI
+    async function generateAISpecific(fieldId) {
+      const programName = document.getElementById('input-program').value.trim();
+      const unit = document.getElementById('input-unit').value;
+      const sasaran = document.getElementById('input-sasaran').value;
+
+      if (!programName) {
+        showModal("Maklumat Tidak Lengkap", "Sila masukkan 'Nama Program' dahulu sebelum menjana kandungan AI.");
+        document.getElementById('input-program').focus();
         return;
       }
-      uploadedPhotos.splice(index, 1);
-      renderPhotoControls();
-      updateOPR();
-    }
 
-    function updateCaption(index, value) {
-      uploadedPhotos[index].caption = value;
-      updateOPR();
-    }
+      // Find button icon for loading state
+      const btn = event.currentTarget;
+      const icon = btn.querySelector('i');
+      const originalIcon = icon.getAttribute('data-lucide');
+      
+      icon.setAttribute('data-lucide', 'loader-2');
+      icon.classList.add('animate-spin');
+      lucide.createIcons();
 
-    function renderPhotoControls() {
-      const container = id('image-preview-list');
-      if (!container) return;
-      if (id('photo-count-badge')) id('photo-count-badge').innerText = `${uploadedPhotos.length} / 4 Gambar`;
-      container.innerHTML = '';
-
-      uploadedPhotos.forEach((photo, idx) => {
-        const card = document.createElement('div');
-        card.className = "relative border border-slate-200 rounded-lg p-2 bg-slate-50 space-y-1.5 shadow-sm";
-        card.innerHTML = `
-          <div class="relative h-20 w-full overflow-hidden rounded bg-slate-200">
-            <img src="${photo.url}" class="w-full h-full object-cover">
-            <button type="button" onclick="removePhoto(${idx})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow transition">
-              <i data-lucide="x" class="w-3 h-3"></i>
-            </button>
-          </div>
-          <input type="text" value="${photo.caption}" oninput="updateCaption(${idx}, this.value)" placeholder="Keterangan..." class="w-full px-2 py-1 text-[11px] border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
-        `;
-        container.appendChild(card);
-      });
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function renderPhotoGridPreview() {
-      const grid = id('view-photo-grid');
-      if (!grid) return;
-      grid.innerHTML = '';
-
-      if (uploadedPhotos.length === 2) {
-        grid.className = "grid grid-cols-2 gap-1.5";
-      } else if (uploadedPhotos.length === 3) {
-        grid.className = "grid grid-cols-3 gap-1.5";
-      } else {
-        grid.className = "grid grid-cols-2 gap-1.5";
+      const systemPrompt = `Anda adalah seorang guru Malaysia yang pakar menulis Laporan Program (OPR) yang profesional dalam Bahasa Melayu formal. Tulis point-point ringkas atau satu perenggan yang padat.`;
+      
+      let fieldDesc = "";
+      switch(fieldId) {
+        case 'objektif': fieldDesc = "3 Objektif program (Senaraikan bernombor)."; break;
+        case 'ringkasan': fieldDesc = "Ringkasan pengisian program (1 perenggan padat 3-4 ayat)."; break;
+        case 'kekuatan': fieldDesc = "3 Kekuatan program (Senaraikan bernombor)."; break;
+        case 'kelemahan': fieldDesc = "3 Kelemahan/Kekangan program (Senaraikan bernombor)."; break;
+        case 'penambahbaikan': fieldDesc = "3 Cadangan penambahbaikan (Senaraikan bernombor)."; break;
+        case 'impak': fieldDesc = "Impak program kepada murid/peserta (1 ayat padat)."; break;
       }
 
-      uploadedPhotos.forEach(photo => {
-        const item = document.createElement('div');
-        item.className = "flex flex-col items-center border border-slate-300 p-0.5 bg-slate-50 rounded-sm";
-        item.innerHTML = `
-          <div class="w-full h-14 sm:h-16 overflow-hidden bg-slate-200 mb-0.5">
-            <img src="${photo.url}" class="w-full h-full object-cover">
-          </div>
-          <span class="text-[7.5px] text-slate-700 font-medium text-center line-clamp-1">${photo.caption}</span>
-        `;
-        grid.appendChild(item);
-      });
-    }
+      const userPrompt = `Program: ${programName}\nSektor: ${unit}\nSasaran: ${sasaran}\n\nTolong jana maklumat untuk ruangan: ${fieldDesc}\nPastikan laras bahasa pentadbiran sekolah KPM.`;
 
-    // Contextual Malay AI Content Generator Engine
-    function generateAIContent(type, programName, unit) {
-      const p = (programName && programName.trim()) ? programName.trim() : "Program / Aktiviti Sekolah";
-      const u = unit || "Kurikulum";
-      
-      const aiTemplates = {
-        objektif: [
-          `1. Mendedahkan peserta kepada objektif dan modul utama ${p} secara mendalam.\n2. Meningkatkan tahap kemahiran, pengetahuan serta keyakinan murid selaras dengan fokus ${u}.\n3. Memupuk semangat kerjasama dan sahsiah terpuji dalam kalangan peserta program.`,
-          `1. Memastikan sasaran pencapaian ${p} dapat direalisasikan mengikut perancangan KPM.\n2. Memperkasakan potensi murid melalui pengisian bimbingan interaktif dan amali.\n3. Membina daya tahan dan motivasi diri murid dalam menghadapi cabaran pembelajaran.`
-        ],
-        ringkasan: [
-          `Program ${p} dimulakan dengan pendaftaran peserta dan taklimat ringkas. Diikuti slot penceramahan interaktif, sesi amali LDK berkumpulan, dan diakhiri dengan majlis penutupan serta penyampaian cenderamata.`,
-          `Pelaksanaan ${p} merangkumi penyampaian strategi utama, latihan praktikal terpandu dan sesi soal jawab. Semua peserta memberikan komitmen cemerlang sepanjang program berlangsung.`
-        ],
-        kekuatan: [
-          `• Kerjasama dan komitmen padu daripada jawatankuasa pelaksana dan guru-guru.\n• Penglibatan murid amat aktif dan responsif sepanjang sesi berlangsung.\n• Pengisian program yang padat dan menepati keperluan objektif unit ${u}.`,
-          `• Penceramah / fasilitator berpengalaman luas dan berupaya menarik minat peserta.\n• Sokongan berterusan daripada barisan pentadbir dan PIBG sekolah.`
-        ],
-        kelemahan: [
-          `• Tempoh masa bagi sesi latihan amali berkumpulan agak terhad.\n• Kawalan siar raya (*PA System*) mengalami sedikit gangguan teknikal di awal majlis.`,
-          `• Ruang lokasi agak padat disebabkan penyertaan murid yang amat memberangsangkan.`
-        ],
-        penambahbaikan: [
-          `• Memanjangkan tempoh slot latihan amali bagi pelaksanaan ${p} pada masa akan datang.\n• Melaksanakan ujian teknikal peralatan siar raya lebih awal sebelum majlis bermula.`,
-          `• Memilih lokasi yang lebih luas dan selesa untuk aktiviti fizikal peserta.`
-        ],
-        impak: [
-          `• 95% peserta menunjukkan peningkatan kefahaman dan motivasi selepas mengikuti ${p}.\n• Membudayakan sikap positif, kerja berpasukan dan kecemerlangan di peringkat sekolah.`,
-          `• Berjaya mencapai objektif yang ditetapkan oleh unit ${u} secara menyeluruh.`
-        ]
+      const payload = {
+        contents: [{ parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
       };
 
-      const options = aiTemplates[type] || [`Pengisian khas bagi ${p}`];
-      return options[Math.floor(Math.random() * options.length)];
-    }
-
-    function generateAISpecific(fieldName) {
-      const prog = id('input-program') ? id('input-program').value : '';
-      const unit = id('input-unit') ? id('input-unit').value : '';
-      const text = generateAIContent(fieldName, prog, unit);
-      if (id(`input-${fieldName}`)) {
-        id(`input-${fieldName}`).value = text;
-        updateOPR();
-        showToast(`Cadangan AI bagi "${fieldName.toUpperCase()}" telah dijana!`);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        if (result.candidates && result.candidates.length > 0) {
+          let text = result.candidates[0].content.parts[0].text.trim();
+          // Clean up markdown formatting if present
+          text = text.replace(/\*\*/g, '');
+          
+          document.getElementById(`input-${fieldId}`).value = text;
+          updateOPR();
+        } else {
+          showModal("Ralat AI", "Sistem tidak memulangkan sebarang teks. Sila cuba sebentar lagi.");
+        }
+      } catch (error) {
+        console.error("AI Error:", error);
+        showModal("Ralat Sambungan", "Gagal menghubungi pelayan AI. Pastikan sambungan internet anda stabil atau cuba lagi.");
+      } finally {
+        icon.setAttribute('data-lucide', originalIcon);
+        icon.classList.remove('animate-spin');
+        lucide.createIcons();
       }
     }
 
-    function autoFillInitialAI() {
-      const prog = id('input-program') ? id('input-program').value : '';
-      const unit = id('input-unit') ? id('input-unit').value : '';
-      if (id('input-objektif')) id('input-objektif').value = generateAIContent('objektif', prog, unit);
-      if (id('input-ringkasan')) id('input-ringkasan').value = generateAIContent('ringkasan', prog, unit);
-      if (id('input-kekuatan')) id('input-kekuatan').value = generateAIContent('kekuatan', prog, unit);
-      if (id('input-kelemahan')) id('input-kelemahan').value = generateAIContent('kelemahan', prog, unit);
-      if (id('input-penambahbaikan')) id('input-penambahbaikan').value = generateAIContent('penambahbaikan', prog, unit);
-      if (id('input-impak')) id('input-impak').value = generateAIContent('impak', prog, unit);
-    }
+    // Generate Whole Form via AI (Structured JSON)
+    async function autoFillWholeFormAI() {
+      const programName = document.getElementById('input-program').value.trim();
+      const unit = document.getElementById('input-unit').value;
+      const sasaran = document.getElementById('input-sasaran').value;
 
-    function autoFillWholeFormAI() {
-      autoFillInitialAI();
-      updateOPR();
-      showToast("Keseluruhan laporan telah dijana semula berasaskan Nama Program!");
-    }
+      if (!programName || programName === "BENGKEL PEMERKASAAN STEM & INOVASI SAINS 2026") {
+        showModal(
+          "Pengesahan Maklumat", 
+          "Anda menggunakan Nama Program lalai (default). Adakah anda mahu AI menjana kandungan berdasarkan nama ini? (Digalakkan untuk menukar nama program bagi hasil yang lebih spesifik).",
+          true, 
+          () => executeAI()
+        );
+      } else {
+        executeAI();
+      }
 
-    function resetForm() {
-      const form = id('opr-form');
-      if (form) form.reset();
-      setDefaultDateToday();
-      handleTempatChange();
-      autoFillInitialAI();
-      updateOPR();
-      showToast("Borang telah diset semula!");
-    }
+      async function executeAI() {
+        const btnAll = document.getElementById('btn-ai-all');
+        const originalHtml = btnAll.innerHTML;
+        btnAll.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menjana...`;
+        lucide.createIcons();
 
-    function showToast(msg) {
-      const toast = id('toast');
-      if (!toast) return;
-      if (id('toast-message')) id('toast-message').innerText = msg;
-      toast.classList.remove('hidden');
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3000);
+        const systemPrompt = `Anda adalah pendidik di Malaysia. Jana maklumat lengkap Laporan Program Sekolah (OPR) berdasarkan nama program yang diberi. Gunakan Bahasa Melayu rasmi KPM. Pastikan jawapan ringkas, padat dan logik.`;
+        
+        const userPrompt = `Jana pengisian OPR untuk program berikut:\nNama Program: ${programName}\nUnit: ${unit}\nSasaran: ${sasaran}\n\nBerikan respons dalam format JSON dengan kunci: objektif, ringkasan, kekuatan, kelemahan, penambahbaikan, impak. Gunakan bullet points atau nombor (1., 2.) di mana sesuai dalam teks.`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                "objektif": { type: "STRING" },
+                "ringkasan": { type: "STRING" },
+                "kekuatan": { type: "STRING" },
+                "kelemahan": { type: "STRING" },
+                "penambahbaikan": { type: "STRING" },
+                "impak": { type: "STRING" }
+              },
+              required: ["objektif", "ringkasan", "kekuatan", "kelemahan", "penambahbaikan", "impak"]
+            }
+          }
+        };
+
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          
+          const result = await response.json();
+          
+          if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
+            const jsonText = result.candidates[0].content.parts[0].text;
+            const data = JSON.parse(jsonText);
+            
+            document.getElementById('input-objektif').value = (data.objektif || "").replace(/\*\*/g, '');
+            document.getElementById('input-ringkasan').value = (data.ringkasan || "").replace(/\*\*/g, '');
+            document.getElementById('input-kekuatan').value = (data.kekuatan || "").replace(/\*\*/g, '');
+            document.getElementById('input-kelemahan').value = (data.kelemahan || "").replace(/\*\*/g, '');
+            document.getElementById('input-penambahbaikan').value = (data.penambahbaikan || "").replace(/\*\*/g, '');
+            document.getElementById('input-impak').value = (data.impak || "").replace(/\*\*/g, '');
+            
+            updateOPR();
+          } else {
+             showModal("Ralat AI", "Sistem tidak memulangkan kandungan yang sah.");
+          }
+        } catch (error) {
+          console.error("AI Gen All Error:", error);
+          showModal("Ralat Semasa Penjanaan", "Ralat berlaku semasa menghubungi servis AI. Sila pastikan anda mempunyai akses internet dan cuba lagi.");
+        } finally {
+          btnAll.innerHTML = originalHtml;
+          lucide.createIcons();
+        }
+      }
     }
   </script>
 </body>
